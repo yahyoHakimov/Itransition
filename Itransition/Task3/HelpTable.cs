@@ -1,51 +1,53 @@
-﻿using System;
+﻿using Itransition.Task3;
+using Spectre.Console;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Itransition.Task3
+public class HelpTable
 {
-    using System;
-    using System.Collections.Generic;
+    private readonly List<string> moves;
 
-    public class HelpTable
+    public HelpTable(List<string> moves)
     {
-        private readonly List<string> moves;
-
-        public HelpTable(List<string> moves)
-        {
-            this.moves = moves;
-        }
-
-        public void DisplayHelp()
-        {
-            Console.WriteLine("Help Table:");
-            Console.Write("     ");
-            foreach (var move in moves)
-            {
-                Console.Write(move.PadRight(10));
-            }
-            Console.WriteLine();
-
-            for (int i = 0; i < moves.Count; i++)
-            {
-                Console.Write(moves[i].PadRight(5));
-                for (int j = 0; j < moves.Count; j++)
-                {
-                    if (i == j)
-                    {
-                        Console.Write("Draw".PadRight(10));
-                    }
-                    else
-                    {
-                        var gameRules = new GameRules(moves);
-                        Console.Write(gameRules.DetermineWinner(moves[i], moves[j]).PadRight(10));
-                    }
-                }
-                Console.WriteLine();
-            }
-        }
+        this.moves = moves;
     }
 
+    public void DisplayHelp()
+    {
+        // Create the table
+        var table = new Table();
+
+        // Add a column for "Moves"
+        table.AddColumn("Moves");
+
+        // Add columns for each move
+        foreach (var move in moves)
+        {
+            table.AddColumn(move);
+        }
+
+        // Add rows for each move
+        for (int i = 0; i < moves.Count; i++)
+        {
+            var row = new List<string> { moves[i] };  // Start with the move name
+            for (int j = 0; j < moves.Count; j++)
+            {
+                if (i == j)
+                {
+                    row.Add("Draw");
+                }
+                else
+                {
+                    var gameRules = new GameRules(moves);
+                    row.Add(gameRules.DetermineWinner(moves[i], moves[j]));
+                }
+            }
+
+            // Add the row to the table
+            table.AddRow(row.ToArray());
+        }
+
+        // Render the table
+        AnsiConsole.Write(table);
+    }
 }
