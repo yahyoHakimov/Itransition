@@ -1,44 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Itransition.Task3
+﻿namespace Itransition.Task3
 {
-    using System;
     using System.Collections.Generic;
 
     public class GameRules
     {
-        private readonly List<string> moves;
+        private List<string> Moves;
 
         public GameRules(List<string> moves)
         {
-            this.moves = moves;
+            Moves = moves;
         }
 
-        // Determine the winner
-        public string DetermineWinner(string playerMove, string computerMove)
+        public string DetermineResult(string playerMove, string opponentMove)
         {
-            int playerIndex = moves.IndexOf(playerMove);
-            int computerIndex = moves.IndexOf(computerMove);
-
-            int halfSize = moves.Count / 2;
-
-            if (playerIndex == computerIndex)
-            {
+            if (playerMove == opponentMove)
                 return "Draw";
-            }
-            else if ((computerIndex > playerIndex && computerIndex - playerIndex <= halfSize) ||
-                     (playerIndex > computerIndex && playerIndex - computerIndex > halfSize))
+
+            int playerIndex = Moves.IndexOf(playerMove);
+            int opponentIndex = Moves.IndexOf(opponentMove);
+            int half = Moves.Count / 2;
+
+            // Calculate winning moves for the player
+            var winningMoves = new List<string>();
+            for (int i = 1; i <= half; i++)
             {
-                return "Computer Wins!";
+                int index = (playerIndex + i) % Moves.Count;
+                winningMoves.Add(Moves[index]);
             }
+
+            if (winningMoves.Contains(opponentMove))
+                return "Win";
             else
+                return "Lose";
+        }
+
+        public string DetermineWinner(string userMove, string computerMove)
+        {
+            string result = DetermineResult(userMove, computerMove);
+            return result switch
             {
-                return "Player Wins!";
-            }
+                "Win" => "You win!",
+                "Lose" => "Computer wins!",
+                "Draw" => "Draw",
+                _ => "Error determining winner"
+            };
         }
     }
 
